@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
     public static final String URL_HORSE_RACING = "https://sports.yahoo.com/box/rss.xml";
     public static final String URL_CYCLING = "https://sports.yahoo.com/sc/rss.xml";
     public static final String URL_BOXING = "https://sports.yahoo.com/box/rss.xml";
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
