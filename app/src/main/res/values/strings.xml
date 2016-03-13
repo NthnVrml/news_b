@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">News Beautifier</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="extra_rss">EXTRA.feedarray</string>
+    <string name="extra_rssitems">EXTRA.rssitems</string>
+    <string name="menu_share">Share</string>
+    <string name="author_name">NthnVrml</string>
+    <string name="share_message">\"News Beautiful is very good  RSS Reader, Try it !\"</string>
+    <string name="soccer">Soccer</string>
+    <string name="horse_racing">Horse Racing</string>
+    <string name="skiing">Skiing</string>
+    <string name="cycling">Cycling</string>
+    <string name="boxing">Boxing</string>
+    <string name="Top">Top</string>
+</resources>
