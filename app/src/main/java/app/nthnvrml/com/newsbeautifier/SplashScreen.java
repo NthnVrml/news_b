@@ -17,7 +17,7 @@ import android.view.WindowManager;
  */
 public class SplashScreen extends Activity {
     private static final int STOPSPLASH = 10;
-    private static final long SPLASHTIME = 5000;
+    private static final long SPLASHTIME = 3000;
 
     Handler splashHandler = new Handler() {
         @Override
