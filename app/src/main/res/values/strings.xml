@@ -16,4 +16,6 @@
     <string name="cycling">Cycling</string>
     <string name="boxing">Boxing</string>
     <string name="Top">Top</string>
+    <string name="not_connected">You are not connected. Configure your connexion and come back :)</string>
+    <string name="warning">Warning</string>
 </resources>
