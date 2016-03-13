@@ -3,17 +3,19 @@ package app.nthnvrml.com.newsbeautifier;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +24,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.xml.sax.SAXException;
 
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity
 
 
     ProgressDialog progressDialog;
+    Context context;
 
     public static final String URL_NEWS = "http://news.yahoo.com/rss/";
     public static final String URL_HEALTH = "https://fr.news.yahoo.com/rss/sante";
@@ -57,6 +64,50 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        this.context = this;
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                alertDialog.setTitle(getResources().getString(R.string.enter_your_feed));
+                alertDialog.setMessage("RSS");
+                final EditText input = new EditText(MainActivity.this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                alertDialog.setView(input);
+                alertDialog.setIcon(R.mipmap.ic_launcher);
+
+                alertDialog.setPositiveButton("YES",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (input != null &&
+                                        input.getText() != null) {
+                                        new RetrieveFeedTask(context).execute(input.getText().toString());
+                                }
+                            }
+                        });
+
+                alertDialog.setNegativeButton("NO",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                alertDialog.show();
+            }
+
+        });
+
+
+
+
 
         progressDialog = new ProgressDialog(this);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -129,11 +180,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_boxing) {
             retrieveFeedTask.execute(URL_BOXING);
             getSupportActionBar().setTitle(getResources().getString(R.string.soccer));
-
-
-
-
-
         } else if (id == R.id.nav_other) {
             retrieveFeedTask.execute(URL_TOP);
             getSupportActionBar().setTitle("Others");
@@ -153,6 +199,7 @@ public class MainActivity extends AppCompatActivity
     public class RetrieveFeedTask extends AsyncTask<String, Void, ArrayList<RssItem>> {
 
         Context context;
+        String error = null;
 
         public RetrieveFeedTask(Context c) {
             this.context = c;
@@ -174,13 +221,19 @@ public class MainActivity extends AppCompatActivity
                 URL url = new URL(FeedUrl[0]);
                 feed = RssReader.read(url);
             } catch (MalformedURLException e) {
+                error = "MalformedURLException";
                 e.printStackTrace();
             } catch (SAXException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return feed.getRssItems();
+
+            if (feed != null) {
+                return feed.getRssItems();
+            } else {
+                return null;
+            }
         }
 
         @Override
@@ -190,7 +243,7 @@ public class MainActivity extends AppCompatActivity
                 progressDialog.dismiss();
             }
 
-            if (!rssItems.isEmpty())
+            if (rssItems != null && !rssItems.isEmpty()) {
                 for (RssItem rssItem : rssItems) {
                     if (rssItem.getTitle() != null)
                         Log.i("Title", rssItem.getTitle());
@@ -198,19 +251,40 @@ public class MainActivity extends AppCompatActivity
                         Log.i("Content", rssItem.getContent());
                     if (rssItem.getDescription() != null)
                         Log.i("Description", rssItem.getDescription());
+
+
+                    Bundle bundle = new Bundle();
+                    Fragment fragment = new RSSListFragment();
+
+                    bundle.putParcelableArrayList(this.context.getString(R.string.extra_rss), rssItems);
+                    fragment.setArguments(bundle);
+
+                    FragmentManager fragmentManager = ((MainActivity) this.context).getSupportFragmentManager();
+                    fragmentManager
+                            .beginTransaction()
+                            .replace(R.id.content_frame, fragment)
+                            .commit();
+                }
+
+            } else {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                if (error != null && error.equals("MalformedURLException")) {
+                    builder.setMessage(getResources().getString(R.string.error_parser));
+                } else {
+                    builder.setMessage(getResources().getString(R.string.not_connected));
+                }
+                builder.setTitle(getResources().getString(R.string.warning));
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+                builder.setCancelable(false);
+                builder.setPositiveButton("QUIT", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                builder.show();
             }
 
-            Bundle bundle = new Bundle();
-            Fragment fragment = new RSSListFragment();
 
-            bundle.putParcelableArrayList(this.context.getString(R.string.extra_rss), rssItems);
-            fragment.setArguments(bundle);
-
-            FragmentManager fragmentManager = ((MainActivity) this.context).getSupportFragmentManager();
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content_frame, fragment)
-                    .commit();
         }
 
     }
