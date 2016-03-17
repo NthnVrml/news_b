@@ -37,7 +37,6 @@ public class RssItem implements Comparable<RssItem>, Parcelable {
 	private String content;
 
 	public RssItem() {
-		
 	}
 	
 	public RssItem(Parcel source) {

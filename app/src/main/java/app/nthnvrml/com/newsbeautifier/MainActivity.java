@@ -1,21 +1,16 @@
 package app.nthnvrml.com.newsbeautifier;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import org.xml.sax.SAXException;
 
@@ -44,14 +38,12 @@ import app.nthnvrml.com.newsbeautifier.RSS.model.RssItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
     ProgressDialog progressDialog;
     Context context;
 
     public static final String URL_NEWS = "http://news.yahoo.com/rss/";
     public static final String URL_HEALTH = "https://fr.news.yahoo.com/rss/sante";
     public static final String URL_TOP = "http://www.feedforall.com/sample-feed.xml";
-
     public static final String URL_SOCCER = "http://sports.yahoo.com/soccer//rss.xml";
     public static final String URL_HORSE_RACING = "https://sports.yahoo.com/box/rss.xml";
     public static final String URL_CYCLING = "https://sports.yahoo.com/sc/rss.xml";
@@ -60,12 +52,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        this.context = this;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.context = this;
+        progressDialog = new ProgressDialog(this);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int which) {
                                 if (input != null &&
                                         input.getText() != null) {
-                                        new RetrieveFeedTask(context).execute(input.getText().toString());
+                                    new RetrieveFeedTask(context).execute(input.getText().toString());
                                 }
                             }
                         });
@@ -105,23 +106,10 @@ public class MainActivity extends AppCompatActivity
 
         });
 
-
-
-
-
-        progressDialog = new ProgressDialog(this);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         new RetrieveFeedTask(this).execute(URL_NEWS);
 
     }
+
 
     @Override
     public void onBackPressed() {
@@ -160,7 +148,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-
         RetrieveFeedTask retrieveFeedTask = new RetrieveFeedTask(this);
         if (id == R.id.nav_all_news) {
             retrieveFeedTask.execute(URL_NEWS);
@@ -173,13 +160,13 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(R.string.soccer));
         } else if (id == R.id.nav_ridding) {
             retrieveFeedTask.execute(URL_HORSE_RACING);
-            getSupportActionBar().setTitle(getResources().getString(R.string.soccer));
+            getSupportActionBar().setTitle(getResources().getString(R.string.horse_racing));
         } else if (id == R.id.nav_cycling) {
             retrieveFeedTask.execute(URL_CYCLING);
-            getSupportActionBar().setTitle(getResources().getString(R.string.soccer));
+            getSupportActionBar().setTitle(getResources().getString(R.string.cycling));
         } else if (id == R.id.nav_boxing) {
             retrieveFeedTask.execute(URL_BOXING);
-            getSupportActionBar().setTitle(getResources().getString(R.string.soccer));
+            getSupportActionBar().setTitle(getResources().getString(R.string.boxing));
         } else if (id == R.id.nav_other) {
             retrieveFeedTask.execute(URL_TOP);
             getSupportActionBar().setTitle("Others");
@@ -244,13 +231,15 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (rssItems != null && !rssItems.isEmpty()) {
-                for (RssItem rssItem : rssItems) {
-                    if (rssItem.getTitle() != null)
-                        Log.i("Title", rssItem.getTitle());
-                    if (rssItem.getContent() != null )
-                        Log.i("Content", rssItem.getContent());
-                    if (rssItem.getDescription() != null)
-                        Log.i("Description", rssItem.getDescription());
+//                for (RssItem rssItem : rssItems) {
+//                    if (rssItem.getTitle() != null)
+//                        Log.i("Title", rssItem.getTitle());
+//                    if (rssItem.getContent() != null )
+//                        Log.i("Content", rssItem.getContent());
+//                    if (rssItem.getDescription() != null)
+//                        Log.i("Description", rssItem.getDescription());
+//
+//                }
 
 
                     Bundle bundle = new Bundle();
@@ -264,7 +253,7 @@ public class MainActivity extends AppCompatActivity
                             .beginTransaction()
                             .replace(R.id.content_frame, fragment)
                             .commit();
-                }
+
 
             } else {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);

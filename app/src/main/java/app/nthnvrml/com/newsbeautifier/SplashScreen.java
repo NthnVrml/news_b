@@ -30,7 +30,7 @@ public class SplashScreen extends Activity {
                         startActivity(intent);
                         break;
                     } else {
-                        final AlertDialog.Builder builder=new AlertDialog.Builder(SplashScreen.this);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
                         builder.setTitle(getResources().getString(R.string.warning));
                         builder.setMessage(getResources().getString(R.string.not_connected));
                         builder.setIcon(android.R.drawable.ic_dialog_alert);
@@ -62,7 +62,9 @@ public class SplashScreen extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.splashscreen);
+
         Message msg = new Message();
         msg.what = STOPSPLASH;
         splashHandler.sendMessageDelayed(msg, SPLASHTIME);
