@@ -55,7 +55,7 @@ public class RSSListFragment extends Fragment {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshLayout.setRefreshing(false);
+                refreshLayout.setRefreshing(true);
             }
         });
 

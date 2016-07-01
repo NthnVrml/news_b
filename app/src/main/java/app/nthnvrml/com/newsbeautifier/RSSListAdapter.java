@@ -45,8 +45,7 @@ public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.ViewHold
         notifyItemRemoved(position);
     }
 
-    //Return le viewHolder avec la vue qui lui correspont. i
-    // ci le cas est simple nous n'avons qu'un seul Type de vue;
+    //Return viewHolder (Simple case : just one viewType)
     @Override
     public RSSListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_list_item, parent, false);
@@ -57,7 +56,7 @@ public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.ViewHold
 
 
 
-    // On ajoute les valeurs dans les views
+    // Add value in View composant
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
 
@@ -65,7 +64,7 @@ public class RSSListAdapter extends RecyclerView.Adapter<RSSListAdapter.ViewHold
         holder.pubDate.setText(this.rssItems.get(position).getPubDate().toString());
     }
 
-    // retourne le nombre d'item dans l'adapter. (item a afficher)
+    // return size of object to display
     @Override
     public int getItemCount() {
         return this.rssItems.size();

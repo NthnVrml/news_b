@@ -49,7 +49,6 @@ public class RssFeed implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		
 		Bundle data = new Bundle();
 		data.putString("title", title);
 		data.putString("link", link);

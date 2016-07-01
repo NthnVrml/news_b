@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(R.string.boxing));
         } else if (id == R.id.nav_other) {
             retrieveFeedTask.execute(URL_TOP);
-            getSupportActionBar().setTitle("Others");
+            getSupportActionBar().setTitle(getResources().getString(R.string.top));
         } else if (id == R.id.nav_share) {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
